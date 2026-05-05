@@ -309,12 +309,13 @@ class MotorNodeAltHold(Node):
             self.startup_timer = self.create_timer(1, self.startup_sequence)
 
         msg = OverrideRCIn()
-        if len(self.channels) < 18:
-            self.channels.extend([0] * (18 - len(self.channels)))
-        if len(self.channels) > 18:
+        channels = self.channels
+        if len(channels) < 18:
+            channels.extend([0] * (18 - len(self.channels)))
+        if len(channels) > 18:
             self.get_logger().warn("Somehow too many channels are present, aborting")
             return
-        msg.channels = self.channels
+        msg.channels = channels
         self.motor_pub.publish(msg)
 
 
