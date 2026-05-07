@@ -1,6 +1,6 @@
 # this code is the motor node for the AUV
 # we are going to use GUIDED mode instead of MANUAL mode to help with PID control
-
+"""
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
@@ -9,7 +9,7 @@ from mavros_msgs.msg import State # to read the state before arming
 from mavros_msgs.srv import CommandBool, SetMode #for amring and mode change services
 import time
 
-class motor_Node(Node):
+class Motor_Node(Node):
     def __init__(self):
         super().__init__('motor_node')
         qos = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)  
@@ -123,3 +123,4 @@ def main(args=None):
     
 if __name__ == '__main__':
     main()
+    """

@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'motor_test_alt_hold = testing_stuff.motor_test_alt_hold:main',
+            'motor_test_3 = testing_stuff.motor_test_3:main',
         ],
     },
 )

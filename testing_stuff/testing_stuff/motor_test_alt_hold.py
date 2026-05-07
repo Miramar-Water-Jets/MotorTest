@@ -24,10 +24,12 @@ def main(args=None):
         motor.get_logger().info("AUV is ready, Preparing for motor test")
 
         motor.move(drive=1600, duration=3.0)     # drive forward for 3 seconds
+        ######### time.sleep(0.1)
         while motor.motion_timer is not None:
             time.sleep(CHECKING_MOTION_TIMER_TIME)
 
         motor.move(sway=1400, duration=3.0)     # strafe right for 3 seconds
+        time.sleep(0.1)
         while motor.motion_timer is not None:
             time.sleep(CHECKING_MOTION_TIMER_TIME)
 

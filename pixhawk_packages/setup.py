@@ -22,7 +22,7 @@ setup(
         'console_scripts': [
             'IMU_node = pixhawk_packages.IMU_node:main',
             'state_node = pixhawk_packages.state_node:main',
-            'motor_node_alt_hold = pixhawk_packages.motor_node_alt_hold:main',
+            'motor_node_manual = pixhawk_packages.motor_node_manual:main',
         ],
     },
 )
