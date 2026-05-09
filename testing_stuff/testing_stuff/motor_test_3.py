@@ -18,7 +18,7 @@ def main():
         auv.wait_ready()  # this must be here
         auv.get_logger().info("motors are ready")
 
-        auv.forward(duration = 3.0)
+        auv.forward(duration = 6.0)
         auv.get_logger().info("moving forward")
 
         """auv.strafe_right(duration=3.0)
