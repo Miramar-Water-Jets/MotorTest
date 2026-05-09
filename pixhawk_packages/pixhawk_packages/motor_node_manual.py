@@ -102,6 +102,7 @@ class Motor_Node(Node):
         self.ready_status = False #setting the arming status to false, will change once the startup sequence is complete
 
         self.motion_timer = None
+        self.shutdown_requested = False
 
 
 
@@ -466,7 +467,7 @@ def main(args=None):
     node = Motor_Node()
     try:
         # spin in a loop and check for shutdown requests from callbacks
-        while rclpy.ok() and not node.shutdown_requested:
+        while rclpy.ok() and not getattr(node, 'shutdown_requested', False):
             rclpy.spin_once(node, timeout_sec=0.1)
     finally:
         try:

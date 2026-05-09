@@ -14,16 +14,25 @@ def main():
     spin_thread.start()
 
     try:
+        auv.get_logger().info("waiting for motors to be ready")
         auv.wait_ready()  # this must be here
-        auv.forward(duration = 3.0)
-        auv.strafe_right(duration=3.0)
-        auv.forward(duration=3.0)
-        auv.strafe_left(duration=3.0)
-        auv.backward(duration=3.0)
-        auv.strafe_right(duration=3.0)
+        auv.get_logger().info("motors are ready")
+
+        auv.forward(duration = 5.0)
+        auv.get_logger().info("moving forward")
+        auv.strafe_right(duration=5.0)
+        auv.get_logger().info("moving right")
+        auv.forward(duration=5.0)
+        auv.get_logger().info("moving forward")
+        auv.strafe_left(duration=5.0)
+        auv.get_logger().info("moving left")
+        auv.backward(duration=5.0)
+        auv.get_logger().info("moving backward")
+        auv.strafe_right(duration=5.0)
+        auv.get_logger().info("moving right")
         auv.stop()
     except KeyboardInterrupt:
-        auv.get_logger().into("program stopped. motors are set to neutral and disarm")
+        auv.get_logger().info("program stopped. motors are set to neutral and disarm")
     finally:
         auv.stop()
         time.sleep(1.0)
