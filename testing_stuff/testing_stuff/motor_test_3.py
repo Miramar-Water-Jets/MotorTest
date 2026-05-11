@@ -28,10 +28,10 @@ def main():
         motor.get_logger().info("moving forward NOW")
         auv.forward(duration = 6.0)
 
-        
+        """
         motor.get_logger().info("moving right NOW")
         auv.strafe_right(duration=5.0)
-        """
+        
         auv.forward(duration=3.0)
         motor.get_logger().info("moving forward")
 
