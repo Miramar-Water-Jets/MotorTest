@@ -29,6 +29,7 @@ def main():
         auv.forward(duration = 6.0)
         motor.get_logger().info("testing the stop function")
         auv.stop()
+        time.sleep(1.0)
         motor.get_logger().info("testing complete")
 
         """
