@@ -27,6 +27,9 @@ def main():
 
         motor.get_logger().info("moving forward NOW")
         auv.forward(duration = 6.0)
+        motor.get_logger().info("testing the stop function")
+        auv.stop()
+        motor.get_logger().info("testing complete")
 
         """
         motor.get_logger().info("moving right NOW")
@@ -49,10 +52,12 @@ def main():
 
     except KeyboardInterrupt:
         motor.get_logger().info("program stopped. motors are set to neutral and disarm")
-    finally:
+        time.sleep(0.5)  #give some time for auv to stop
         auv.stop()
         time.sleep(1.0)
         motor.arm(False)
         time.sleep(1.5)
+    finally:
         motor.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()

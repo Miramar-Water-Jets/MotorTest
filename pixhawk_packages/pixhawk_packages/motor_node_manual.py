@@ -175,7 +175,7 @@ class Motor_Node(Node):
     dive = moving up(>1500)/down(<1500)
     heaidng = turning CW(>1500)/CCW(<1500)
 
-    duration = thow long it is continuing that motion.
+    duration = how long it is continuing that motion.
     """
     def move(self, drive = 1500, sway = 1500, dive = 1500, heading = 1500, duration = 1.0):
         if not self.ready_status:
