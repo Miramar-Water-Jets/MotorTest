@@ -7,3 +7,5 @@
 /log
 
 mav.*
+
+**/__pycache__/

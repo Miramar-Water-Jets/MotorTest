@@ -26,7 +26,9 @@ def main():
         motor.get_logger().info("motors are ready")
 
         motor.get_logger().info("moving forward NOW")
-        auv.forward(duration = 6.0)
+        duration = 6.0
+        auv.forward(duration=duration)
+        time.sleep(duration)
         motor.get_logger().info("testing the stop function")
         auv.stop()
         time.sleep(1.0)
@@ -59,6 +61,7 @@ def main():
         motor.arm(False)
         time.sleep(1.5)
     finally:
-        motor.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+        motor.destroy_node()
+        spin_thread.join(timeout=2.0)

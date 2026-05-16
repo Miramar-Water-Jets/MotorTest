@@ -1,6 +1,8 @@
+import os
+from glob import glob
 from setuptools import find_packages, setup
 
-package_name = 'pixhawk_packages'
+package_name = 'launching'
 
 setup(
     name=package_name,
@@ -10,21 +12,17 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.py'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='trancaominhtri',
-    maintainer_email='trancaominhtri@todo.todo',
+    maintainer_email='236134229+tritran078@users.noreply.github.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'IMU_node = pixhawk_packages.IMU_node:main',
-            'state_node = pixhawk_packages.state_node:main',
-            'movement_node = pixhawk_packages.movement_node:main',
-            'publish_rc = pixhawk_packages.publish_rc:main',
-            'state_monitor = pixhawk_packages.state_monitor:main',
         ],
     },
 )

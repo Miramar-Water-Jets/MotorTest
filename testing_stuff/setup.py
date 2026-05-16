@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'motor_test_3 = testing_stuff.motor_test_3:main',
+            'motor_test_4 = testing_stuff.motor_test_4:main',
         ],
     },
 )
