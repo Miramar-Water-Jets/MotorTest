@@ -28,26 +28,22 @@ class MotorTest(MovementNode):
 
 
         self.get_logger().info("going forward NOW")
-
-        self.move(drive = 1600, duration = 5.0)
-
+        self.move(drive = 1550, duration = 2.5)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done moving forward")
 
-
-
-
-        self.get_logger().info("partially stopping NOW")
-
-        self.move(duration = 5.0)
-
+        self.get_logger().info("pausing for 2 sec")
+        self.move(duration = 2.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done pausing")
 
-
-
-        self.get_logger().info("Test complete")
-
+        self.get_logger().info("going sideways NOW")
+        self.move(strafe = 1550, duration = 4.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done moving sideways")
 
 
 def main(args = None):

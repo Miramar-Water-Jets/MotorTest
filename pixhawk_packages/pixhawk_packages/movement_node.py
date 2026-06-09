@@ -25,14 +25,11 @@ class MovementNode(Node):
     def send(self, drive = 1500, strafe = 1500, dive = 1500, heading = 1500):
         msg = UInt16MultiArray()
 
-        channels = [1500] * 18
-
-        channels[2] = dive
-        channels[3] = heading
-        channels[4] = drive
-        channels[5] = strafe
-
-        msg.data = channels
+        msg.data = [65535] * 18
+        msg.data[2] = dive
+        msg.data[3] = heading
+        msg.data[4] = drive
+        msg.data[5] = strafe
 
         self.thruster_cmd_pub.publish(msg)
 
@@ -53,7 +50,7 @@ class MovementNode(Node):
 
     def motion_timer_callback(self):
         if self.get_clock().now() >= self.end_time:
-            self.destroy_timer(self.motion_timer)  # use destroy_timer instead
+            self.destroy_timer(self.motion_timer) 
             self.motion_timer = None
         else:
             self.send(drive=self._drive, strafe=self._strafe,

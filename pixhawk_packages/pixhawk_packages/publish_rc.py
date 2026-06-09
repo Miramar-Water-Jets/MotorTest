@@ -4,6 +4,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, QoSDurabilityPolicy
 from mavros_msgs.msg import OverrideRCIn
 from std_msgs.msg import Bool, UInt16MultiArray
+import time
 
 class Publish_RC(Node):
     def __init__(self):
@@ -13,7 +14,11 @@ class Publish_RC(Node):
         qos = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
         qos_latched = QoSProfile( depth=1, reliability=ReliabilityPolicy.RELIABLE, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
 
-        self.channels = [1500] * 18  
+        self.channels = [65535] * 18
+        self.channels[2] = 1500
+        self.channels[3] = 1500
+        self.channels[4] = 1500
+        self.channels[5] = 1500
 
         self.current_status = False
 
@@ -44,7 +49,11 @@ class Publish_RC(Node):
         if self.current_status == False:
             self.get_logger().warn("AUV is not ready, please do the startup sequence", throttle_duration_sec=1.0)
 
-            msg.channels = [1500] * 18
+            msg.channels = [65535] * 18
+            msg.channels[2] = 1500
+            msg.channels[3] = 1500
+            msg.channels[4] = 1500
+            msg.channels[5] = 1500
 
             self.RC_pub.publish(msg)
 
@@ -53,7 +62,11 @@ class Publish_RC(Node):
         if elapsed > 0.5:
             self.get_logger().warn("have not received any movement for 0.5s, setting all to neutral ", throttle_duration_sec=1.0)
 
-            msg.channels = [1500] * 18
+            msg.channels = [65535] * 18
+            msg.channels[2] = 1500
+            msg.channels[3] = 1500
+            msg.channels[4] = 1500
+            msg.channels[5] = 1500
 
             self.RC_pub.publish(msg)
 
@@ -73,6 +86,14 @@ def main(args= None):
     except KeyboardInterrupt:
         pass
     finally:
+        msg = OverrideRCIn()
+        msg.channels = [65535] * 18
+        msg.channels[2] = 1500
+        msg.channels[3] = 1500
+        msg.channels[4] = 1500
+        msg.channels[5] = 1500
+        publish_RC.RC_pub.publish(msg)
+        time.sleep(0.1)
         publish_RC.destroy_node()
         rclpy.shutdown()
 
