@@ -20,8 +20,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motor_test_3 = testing_stuff.motor_test_3:main',
-            'motor_test_4 = testing_stuff.motor_test_4:main',
+            'square_pattern_test = testing_stuff.square_pattern_test:main',
+            'basic_test = testing_stuff.basic_test:main',
+            'depth_hold_test = testing_stuff.depth_hold_test:main',
+            'aligning_test = testing_stuff.aligning_test:main',
+            'mission_node = testing_stuff.mission_node:main',
         ],
     },
 )

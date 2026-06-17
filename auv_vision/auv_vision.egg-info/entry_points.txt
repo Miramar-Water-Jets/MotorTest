@@ -1,0 +1,2 @@
+[console_scripts]
+camera_node = auv_vision.camera_node:main

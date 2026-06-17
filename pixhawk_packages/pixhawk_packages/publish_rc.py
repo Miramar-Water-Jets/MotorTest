@@ -16,7 +16,7 @@ class Publish_RC(Node):
 
         self.channels = [65535] * 18
         self.channels[2] = 1500
-        self.channels[3] = 1500
+        self.channels[3] = 65535
         self.channels[4] = 1500
         self.channels[5] = 1500
 
@@ -51,7 +51,7 @@ class Publish_RC(Node):
 
             msg.channels = [65535] * 18
             msg.channels[2] = 1500
-            msg.channels[3] = 1500
+            msg.channels[3] = 65535
             msg.channels[4] = 1500
             msg.channels[5] = 1500
 
@@ -64,7 +64,7 @@ class Publish_RC(Node):
 
             msg.channels = [65535] * 18
             msg.channels[2] = 1500
-            msg.channels[3] = 1500
+            msg.channels[3] = 65535
             msg.channels[4] = 1500
             msg.channels[5] = 1500
 
@@ -80,24 +80,45 @@ class Publish_RC(Node):
 def main(args= None):
     rclpy.init(args=args)
     publish_RC = Publish_RC()
-    
+
+    import signal
+
+    def send_neutral_burst(publish_RC_node):
+        """Blast neutral RC override commands so the Pixhawk definitely gets one."""
+        try:
+            msg = OverrideRCIn()
+            msg.channels = [65535] * 18
+            msg.channels[2] = 1500
+            msg.channels[3] = 65535
+            msg.channels[4] = 1500
+            msg.channels[5] = 1500
+            # Send multiple times — the Pixhawk needs to actually receive one
+            # before MAVROS dies from the same SIGINT
+            for _ in range(10):
+                publish_RC_node.RC_pub.publish(msg)
+                time.sleep(0.05)
+        except Exception:
+            pass
+
+    def sigint_handler(sig, frame):
+        """Intercept SIGINT BEFORE rclpy tears down, stop motors first."""
+        send_neutral_burst(publish_RC)
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGINT, sigint_handler)
+
     try:
         rclpy.spin(publish_RC)
     except KeyboardInterrupt:
         pass
     finally:
-        msg = OverrideRCIn()
-        msg.channels = [65535] * 18
-        msg.channels[2] = 1500
-        msg.channels[3] = 1500
-        msg.channels[4] = 1500
-        msg.channels[5] = 1500
-        publish_RC.RC_pub.publish(msg)
-        time.sleep(0.1)
+        # One more burst in case the signal handler didn't fully run
+        send_neutral_burst(publish_RC)
         publish_RC.destroy_node()
-        rclpy.shutdown()
+        try:
+            rclpy.shutdown()
+        except Exception:
+            pass
 
 if __name__ == '__main__':
     main()
-
-

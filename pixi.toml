@@ -25,6 +25,7 @@ ninja = "*"
 rosdep = "*"
 colcon-common-extensions = "*"
 transforms3d = ">=0.4.2,<0.5"
+opencv = ">=4.11.0,<5"
 
 # Define all the different ROS environments
 # Each environment corresponds to a different ROS distribution

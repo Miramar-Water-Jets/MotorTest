@@ -27,9 +27,23 @@ def generate_launch_description():
         ),
 
         Node(
+            package='auv_vision',
+            executable='camera_node',
+            name='camera_node',
+            output='screen'
+        ),
+
+        Node(
+            package='auv_vision',
+            executable='detection_node',
+            name='detection_node',
+            output='screen'
+        ),
+        
+        Node(
             package='testing_stuff',
-            executable='motor_test_4',
-            name='motor_test_4',
+            executable='mission_node',
+            name='mission_node',
             output='screen'
         )
     ])
