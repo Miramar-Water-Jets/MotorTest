@@ -83,20 +83,8 @@ class SquarePatternTest(MovementNode):
         self.get_logger().info("square pattern complete")
         
 def main(args = None):
-    rclpy.init(args=args)
-
-    test = SquarePatternTest()
-
-    try: 
-        test.run()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        test.destroy_node()
-        try:
-            rclpy.shutdown()
-        except Exception:
-            pass
+    print("This function shouldn't be called")
+    return
 
 
 if __name__ == '__main__':

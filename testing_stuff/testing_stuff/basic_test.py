@@ -46,20 +46,8 @@ class BasicTest(MovementNode):
 
 
 def main(args = None):
-    rclpy.init(args=args)
-
-    test = BasicTest()
-
-    try: 
-        test.run()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        test.destroy_node()
-        try:
-            rclpy.shutdown()
-        except Exception:
-            pass
+    print("This function shouldn't be called")
+    return
 
 
 if __name__ == '__main__':

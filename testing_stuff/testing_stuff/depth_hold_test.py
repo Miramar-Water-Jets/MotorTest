@@ -50,27 +50,28 @@ class DepthTest(MovementNode):
             rclpy.spin_once(self, timeout_sec = 0.05)
         self.get_logger().info("done moving underwater")
 
+        # waiting for one sec after moving forward at depth 1m
+        self.get_logger().info("waiting for 1 sec now")
+        self.move(duration = 1.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec = 0.05)
+        self.get_logger().info("done waiting 1 sec")   
+
+        # dive to depth 1 meter with the hardcoded speed of 1550, tolerance is + - 0.1 meter
+        self.get_logger().info("turning to 90 degrees right now")
+        self.change_heading(target_heading=90.0)
+        while self.heading_timer is not None: # VERY IMPORTANT: use the heading_timer not motion_timer for this 
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done changing to heading 90 degrees to the right")        
+
+
+
         self.get_logger().info(" depth hold test complete")
 
 
 def main(args = None):
     print("This function shouldn't be called")
     return
-    rclpy.init(args=args)
-
-    test = DepthTest()
-
-    try: 
-        test.run()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        test.destroy_node()
-        try:
-            rclpy.shutdown()
-        except Exception:
-            pass
-
 
 if __name__ == '__main__':
     main()

@@ -16,7 +16,7 @@ class IMUNode(Node):
         self.subscriber = self.create_subscription(Imu, 'mavros/imu/data', self.imu_callback, qos) 
         #creating  a subscriber and listen to imu data from mavros/imu/data topic, when data is received will call imu_callback function, queue size is 10
 
-        self.publisher = self.create_publisher(Vector3, 'auv/imu', qos)
+        self.publisher = self.create_publisher(Vector3, '/auv/imu', qos)
         #creating a publisher to publish imu data in euler degree to auv/imu topic, message type is vector3, queue size is 10
     def imu_callback(self,msg):
         orientation_q = msg.orientation

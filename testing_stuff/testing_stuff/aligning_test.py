@@ -5,7 +5,6 @@ import rclpy
 from rclpy.node import Node
 import time
 from std_msgs.msg import Bool, Float32MultiArray
-from sensor_msgs.msg import Image
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, QoSDurabilityPolicy
 from pixhawk_packages.movement_node import MovementNode
 
@@ -52,7 +51,8 @@ class AligningTest(MovementNode):
         target_count = 0
         end_count = 0
         actually_seeing_gate = False
-        """
+        
+        # diving down 1 meter first to go thorugh the gate
         self.get_logger().info("Diving to depth now")
         self.dive_to_depth(target_depth=1.0, tolerance=0.1)
         while self.dive_timer is not None: # VERY IMPORTANT: use the dive_timer not motion_timer for this 
@@ -64,7 +64,9 @@ class AligningTest(MovementNode):
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done pausing")
-        """
+        
+
+        # THE ALIGNING PORTION OF THE CODE
         while True:
             rclpy.spin_once(self, timeout_sec=0.1)
 
@@ -120,25 +122,19 @@ class AligningTest(MovementNode):
                 if actually_seeing_gate == True and end_count >= 5:
                     self.get_logger().info("the auv has passed through the gate")
                     self.move(duration = 2.0)
+                    while self.motion_timer is not None:
+                        rclpy.spin_once(self, timeout_sec=0.05)
                     actually_seeing_gate = False
                     break
+
 
         self.get_logger().info("Aligning task complete.")
 
 
+
 def main(args=None):
-    rclpy.init(args=args)
-    node = AligningTest()
-    try:
-        node.run()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        try:
-            rclpy.shutdown()
-        except Exception:
-            pass
+    print("This function shouldn't be called")
+    return
 
 if __name__ == "__main__":
     main()

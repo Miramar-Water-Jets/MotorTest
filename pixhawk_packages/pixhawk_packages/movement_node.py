@@ -1,8 +1,10 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
-from std_msgs.msg import Bool, UInt16MultiArray, Float64
-from rclpy.qos import QoSProfile, ReliabilityPolicy, QoSDurabilityPolicy
+from std_msgs.msg import UInt16MultiArray, Float64
+from rclpy.qos import QoSProfile, ReliabilityPolicy
+from geometry_msgs.msg import Vector3                       #for importing the vector3 message type to send imu data in euler degree
+
 
 
 class MovementNode(Node):
@@ -19,6 +21,7 @@ class MovementNode(Node):
 
         self.DIVE_SPEED = 1550
         self.current_depth = 0.0
+        self.current_heading = 0.0
         self.dive_timer = None
 
         self.motion_timer = None
@@ -28,13 +31,19 @@ class MovementNode(Node):
         qos_best_effort = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)
 
         self.thruster_cmd_pub = self.create_publisher(UInt16MultiArray,'auv/thruster_cmd',qos)
+
         self.depth_sub = self.create_subscription(Float64, '/mavros/global_position/rel_alt', self.depth_cb, qos_best_effort)
+        self.IMU_sub = self.create_subscription(Vector3, '/auv/imu', self.heading_cb, qos_best_effort)
+
 
 
 
 
     def depth_cb(self,msg):
         self.current_depth = abs(msg.data)
+
+    def heading_cb(self, msg):
+        self.current_heading = msg.z
 
 
 
@@ -94,6 +103,29 @@ class MovementNode(Node):
 
 
 
+    def change_heading(self, target_heading, tolerance = 5):
+            self.target_heading = target_heading
+            self.tolerance = tolerance
+            if self.motion_timer:
+                self.destroy_timer(self.motion_timer)
+                self.motion_timer = None
+
+            self.heading_timer = self.create_timer(0.05, self.heading_timer_cb)
+
+    def heading_timer_cb(self):
+        heading_error = self.target_heading - self.current_heading
+
+        if abs(heading_error) <= self.tolerance:
+            self.send(heading=1500)
+            self.destroy_timer(self.heading_timer)
+            self.heading_timer = None
+        else:
+            if heading_error > 0:
+                heading_cmd = 1580
+            else:
+                heading_cmd = 1420
+
+            self.send(heading=heading_cmd)
 
 
     def motion_timer_callback(self):
@@ -103,8 +135,6 @@ class MovementNode(Node):
         else:
             self.send(drive=self._drive, strafe=self._strafe,
             dive=self._dive, heading=self._heading)
-
-
 
 
 def main(args= None):
@@ -124,4 +154,3 @@ def main(args= None):
 if __name__ == '__main__':
     main()
         
-
