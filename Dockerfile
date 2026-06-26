@@ -57,6 +57,13 @@ RUN wget https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/in
 WORKDIR /workspace/mavros_ws
 RUN mkdir -p src
 
+# Copy the current repository packages into the workspace so the image builds the
+# packages that already exist in this workspace instead of starting from an empty one.
+COPY auv_vision /workspace/mavros_ws/src/auv_vision
+COPY launching /workspace/mavros_ws/src/launching
+COPY pixhawk_packages /workspace/mavros_ws/src/pixhawk_packages
+COPY testing_stuff /workspace/mavros_ws/src/testing_stuff
+
 # 5. Fetch MAVLink, MAVROS, and geographic_info from the correct ROS 2 sources
 #    - mavlink: must come from ros2-gbp/mavlink-gbp-release at branch release/humble/mavlink.
 #      The main mavlink/mavlink.git repo is the bare C library (no package.xml) and
@@ -106,7 +113,8 @@ RUN git clone https://github.com/ros2-gbp/mavlink-gbp-release.git \
 #    making them compile with C++17 under GCC 8.
 RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash \
     && CC=gcc-8 CXX=g++-8 colcon build --symlink-install \
-        --packages-up-to mavros mavros_extras --executor sequential --parallel-workers 1 \
+        --packages-up-to auv_vision launching pixhawk_packages testing_stuff mavros mavros_extras \
+        --executor sequential --parallel-workers 1 \
         --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17"
 
 # 7. Auto-source the new workspace on container start
