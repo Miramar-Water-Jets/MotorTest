@@ -57,13 +57,6 @@ RUN wget https://raw.githubusercontent.com/mavlink/mavros/ros2/mavros/scripts/in
 WORKDIR /workspace/mavros_ws
 RUN mkdir -p src
 
-# Copy the current repository packages into the workspace so the image builds the
-# packages that already exist in this workspace instead of starting from an empty one.
-COPY auv_vision /workspace/mavros_ws/src/auv_vision
-COPY launching /workspace/mavros_ws/src/launching
-COPY pixhawk_packages /workspace/mavros_ws/src/pixhawk_packages
-COPY testing_stuff /workspace/mavros_ws/src/testing_stuff
-
 # 5. Fetch MAVLink, MAVROS, and geographic_info from the correct ROS 2 sources
 #    - mavlink: must come from ros2-gbp/mavlink-gbp-release at branch release/humble/mavlink.
 #      The main mavlink/mavlink.git repo is the bare C library (no package.xml) and
@@ -101,7 +94,8 @@ RUN git clone https://github.com/ros2-gbp/mavlink-gbp-release.git \
     && git clone https://github.com/ros/diagnostics.git \
         -b ros2-humble src/diagnostics
 
-# 6. Build the workspace
+# 6. Build the dependency packages first so they can be cached separately from
+#    the packages that live in this repository.
 #    --packages-up-to mavros mavros_extras: only build packages in the dependency
 #    chain of our targets. The diagnostics repo contains packages we don't need
 #    (diagnostic_aggregator, self_test, etc.) that fail on GCC 7; this flag skips them.
@@ -113,11 +107,24 @@ RUN git clone https://github.com/ros2-gbp/mavlink-gbp-release.git \
 #    making them compile with C++17 under GCC 8.
 RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash \
     && CC=gcc-8 CXX=g++-8 colcon build --symlink-install \
-        --packages-up-to auv_vision launching pixhawk_packages testing_stuff mavros mavros_extras \
+        --packages-up-to mavros mavros_extras \
         --executor sequential --parallel-workers 1 \
         --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17"
 
-# 7. Auto-source the new workspace on container start
+# 7. Copy the repository packages into the workspace and build them in a separate
+#    step so changes to our packages don't invalidate the dependency build cache.
+COPY auv_vision /workspace/mavros_ws/src/auv_vision
+COPY launching /workspace/mavros_ws/src/launching
+COPY pixhawk_packages /workspace/mavros_ws/src/pixhawk_packages
+COPY testing_stuff /workspace/mavros_ws/src/testing_stuff
+
+RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash \
+    && CC=gcc-8 CXX=g++-8 colcon build --symlink-install \
+        --packages-up-to auv_vision launching pixhawk_packages testing_stuff \
+        --executor sequential --parallel-workers 1 \
+        --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17"
+
+# 8. Auto-source the new workspace on container start
 RUN echo "source /workspace/mavros_ws/install/setup.bash" >> ~/.bashrc
 
 # Set default entrypoint behavior
