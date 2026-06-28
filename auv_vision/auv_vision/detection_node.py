@@ -15,8 +15,8 @@ class DetectionNode(Node):
         qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, history=HistoryPolicy.KEEP_LAST, depth=1)
 
         #path_to_YOLO = '/Users/trancaominhtri/robostack/auv_vision/auv_vision/best.pt'
-        #path_YOLO_hand = '/Users/trancaominhtri/Downloads/best_hand.pt' #use this for testing purposes
-        path_YOLO_hand = '/home/nvidia/robostack/best_hand.pt'
+        path_YOLO_hand = '/Users/trancaominhtri/Downloads/best_hand.pt' #use this for testing purposes
+        #path_YOLO_hand = '/home/nvidia/robostack/best_hand.pt'
 
         self.bridge = CvBridge()
 
