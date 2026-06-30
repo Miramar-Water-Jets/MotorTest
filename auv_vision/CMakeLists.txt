@@ -27,12 +27,16 @@ find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
 
 # ── CUDA (legacy FindCUDA — available on JetPack / L4T) ──────────────────────
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/sysroot")
+  set(CUDA_TOOLKIT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/sysroot" CACHE PATH "CUDA Toolkit Root")
+endif()
 find_package(CUDA REQUIRED)
 
 # ── TensorRT ─────────────────────────────────────────────────────────────────
 # Search paths cover x86_64, aarch64 (Jetson/JetPack), and custom installs.
 find_path(TENSORRT_INCLUDE_DIR NvInfer.h
   HINTS
+    ${CMAKE_CURRENT_SOURCE_DIR}/sysroot/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     /usr/include/aarch64-linux-gnu
     /usr/include/x86_64-linux-gnu
@@ -44,6 +48,7 @@ find_path(TENSORRT_INCLUDE_DIR NvInfer.h
 
 find_library(TENSORRT_LIB nvinfer
   HINTS
+    ${CMAKE_CURRENT_SOURCE_DIR}/sysroot/lib
     /usr/lib/aarch64-linux-gnu
     /usr/lib/x86_64-linux-gnu
     /usr/local/cuda/lib64
@@ -54,6 +59,7 @@ find_library(TENSORRT_LIB nvinfer
 
 find_library(TENSORRT_PLUGIN_LIB nvinfer_plugin
   HINTS
+    ${CMAKE_CURRENT_SOURCE_DIR}/sysroot/lib
     /usr/lib/aarch64-linux-gnu
     /usr/lib/x86_64-linux-gnu
     /usr/local/cuda/lib64

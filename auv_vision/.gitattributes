@@ -1,0 +1,3 @@
+sysroot/lib/libcudart.so filter=lfs diff=lfs merge=lfs -text
+sysroot/lib/libnvinfer_plugin.so filter=lfs diff=lfs merge=lfs -text
+sysroot/lib/libnvinfer.so filter=lfs diff=lfs merge=lfs -text
