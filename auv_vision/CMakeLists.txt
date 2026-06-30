@@ -131,6 +131,8 @@ target_link_libraries(detection_node
   ${TENSORRT_PLUGIN_LIB}
 )
 
+target_link_options(detection_node PRIVATE "-Wl,--allow-shlib-undefined")
+
 # ── install ───────────────────────────────────────────────────────────────────
 install(TARGETS
   camera_node
