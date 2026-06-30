@@ -27,7 +27,7 @@ class BasicTest(MovementNode):
         self.get_logger().info("AUV is ready for testing")
 
         self.get_logger().info("going forward NOW")
-        self.move(strafe = 1450, duration = 2.5)
+        self.move(drive = 1550, duration = 2.5)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward")
