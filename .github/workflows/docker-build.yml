@@ -14,7 +14,7 @@ jobs:
   docker-build:
     runs-on: ubuntu-24.04-arm
     container:
-      image: dustynv/ros:humble-base-l4t-r32.7.1
+      image: dustynv/ros:humble-ros-base-l4t-r32.7.1
 
     steps:
       - name: Check out repository
