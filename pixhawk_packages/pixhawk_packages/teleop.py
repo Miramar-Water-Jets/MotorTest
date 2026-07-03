@@ -45,6 +45,7 @@ class TeleopNode(Node):
         rlist, _, _ = select.select([sys.stdin], [], [], 0.0)
         key = sys.stdin.read(1) if rlist else ''
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
+        print(repr(key))  # add this
         return key
 
     def loop(self):

@@ -39,7 +39,7 @@ def generate_launch_description():
             name='detection_node',
             output='screen'
         ),
-        
+
         Node(
             package='testing_stuff',
             executable='mission_node',
