@@ -26,17 +26,54 @@ class BasicTest(MovementNode):
             rclpy.spin_once(self, timeout_sec = 0.1)
         self.get_logger().info("AUV is ready for testing")
 
+        #test forward movement
         self.get_logger().info("going forward NOW")
         self.move(drive = 1600, duration = 2.5)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward")
 
+        #test pause
+        self.get_logger().info("pausing for 2 sec")
+        self.move(duration = 2.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done pausing")
 
-def main(args = None):
-    print("This function shouldn't be called")
-    return
+        #test strafe to the right movement
+        self.get_logger().info("moving sideways to the right NOW")
+        self.move(strafe = 1600, duration = 2.5)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done moving sideways")
 
+        #test pause
+        self.get_logger().info("pausing for 2 sec")
+        self.move(duration = 2.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done pausing")
+
+        #test turning to the right movement
+        self.get_logger().info("turning to the right now")
+        self.move(heading = 1600, duration = 2.5)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done turning to the right")
+
+        #test pause
+        self.get_logger().info("pausing for 2 sec")
+        self.move(duration = 2.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done pausing")
+
+        #test diving down movement
+        self.get_logger().info("diving down now")
+        self.move(dive = 1400, duration = 2.5)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done diving down")
 
 if __name__ == '__main__':
     main()
