@@ -15,7 +15,7 @@ class State(Enum):
     DEPTH_HOLD_TEST = 3
     ALIGNING_TEST = 4
 
-ACTIVE_MISSIONS = [State.BASIC_TEST]
+ACTIVE_MISSIONS = [State.SQUARE_TEST]
 
 class MissionNode(Node):
     def __init__(self):

@@ -31,9 +31,9 @@ class SquarePatternTest(MovementNode):
             rclpy.spin_once(self, timeout_sec = 0.1)
         self.get_logger().info("AUV is ready for testing")
 
-        # going to the right speed 1550 for 6s 
+        # going to the right speed 1800 for 5s
         self.get_logger().info("going to the right now")
-        self.move(strafe = 1550, duration = 6.0)
+        self.move(strafe = 1800, duration = 5.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done going to the right")
@@ -45,9 +45,9 @@ class SquarePatternTest(MovementNode):
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done pausing")
 
-        # moving forward speed 1550 for 6 sec
+        # moving forward speed 1800 for 5 sec
         self.get_logger().info("going forward now")
-        self.move(drive = 1550, duration = 6.0)
+        self.move(drive = 1800, duration = 5.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward")
@@ -59,9 +59,9 @@ class SquarePatternTest(MovementNode):
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done pausing")
 
-        # going ot the left PWM 1450 for 6s
+        # going to the left PWM 1200 for 5s
         self.get_logger().info("going to the left now")
-        self.move(strafe = 1450, duration = 6.0)
+        self.move(strafe = 1200, duration = 5.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done going to the left")
@@ -73,9 +73,9 @@ class SquarePatternTest(MovementNode):
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done pausing")
 
-        # going backward PWM 1450
+        # going backward PWM 1200 for 5s
         self.get_logger().info("going backward now")
-        self.move(drive = 1450, duration = 6.0)
+        self.move(drive = 1200, duration = 5.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done going backward")

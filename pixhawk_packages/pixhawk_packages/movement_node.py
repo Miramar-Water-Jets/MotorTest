@@ -19,7 +19,7 @@ class MovementNode(Node):
         self._dive = 65535
         self._heading = 1500
 
-        self.DIVE_SPEED = 1550
+        self.DIVE_SPEED = 1700
         self.current_depth = 0.0
         self.current_heading = 0.0
         self.dive_timer = None
@@ -113,7 +113,7 @@ class MovementNode(Node):
             self.heading_timer = self.create_timer(0.05, self.heading_timer_cb)
 
     def heading_timer_cb(self):
-        heading_error = self.target_heading - self.current_heading
+        heading_error = (self.target_heading - self.current_heading + 180) % 360 - 180
 
         if abs(heading_error) <= self.tolerance:
             self.send(heading=1500)
@@ -121,9 +121,9 @@ class MovementNode(Node):
             self.heading_timer = None
         else:
             if heading_error > 0:
-                heading_cmd = 1580
+                heading_cmd = 1650
             else:
-                heading_cmd = 1420
+                heading_cmd = 1350
 
             self.send(heading=heading_cmd)
 

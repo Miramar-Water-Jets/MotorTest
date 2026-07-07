@@ -36,9 +36,9 @@ class StateMonitor(Node):
         if not self.current_state.connected:
             self.get_logger().info("pixhawk is not connected. Please try again")
             return
-        elif self.current_state.mode != "MANUAL":
-            self.get_logger().info("pixhawk is not in MANUAL mode, chaning mode NOW")
-            self.change_mode("MANUAL")
+        elif self.current_state.mode != "ALT_HOLD":
+            self.get_logger().info("pixhawk is not in ALT_HOLD mode, changing mode NOW")
+            self.change_mode("ALT_HOLD")
             return
         elif self.current_state.armed is not True:
             self.get_logger().info("amring the pixhawk NOW")

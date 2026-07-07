@@ -28,24 +28,24 @@ class DepthTest(MovementNode):
         self.get_logger().info("AUV is ready for testing")
 
 
-        # dive to depth 1 meter with the hardcoded speed of 1550, tolerance is + - 0.1 meter
+        # dive to depth 1 meter with the hardcoded speed of 1600, tolerance is + - 0.1 meter
         self.get_logger().info("Diving to depth now")
         self.dive_to_depth(target_depth=1.0, tolerance=0.1)
         while self.dive_timer is not None: # VERY IMPORTANT: use the dive_timer not motion_timer for this 
             rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done wdiving to depth")        
+        self.get_logger().info("done diving to depth")        
 
 
-        # waiting for 15 seconds to check whether hold depth actually works
-        self.get_logger().info("waiting for 15 sec now")
-        self.move(duration = 15.0)
+        # waiting for 10 seconds to check whether hold depth actually works
+        self.get_logger().info("waiting for 10 sec now")
+        self.move(duration = 10.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec = 0.05)
-        self.get_logger().info("done waiting 15 sec")        
+        self.get_logger().info("done waiting 10 sec")        
 
         # driving forward for 5 sec after holding depth
         self.get_logger().info(" moving forward at depth 1 meter underwater")
-        self.move(drive = 1550, duration = 5.0)
+        self.move(drive = 1800, duration = 5.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec = 0.05)
         self.get_logger().info("done moving underwater")
@@ -59,8 +59,9 @@ class DepthTest(MovementNode):
 
         # dive to depth 1 meter with the hardcoded speed of 1550, tolerance is + - 0.1 meter
         self.get_logger().info("turning to 90 degrees right now")
-        self.change_heading(target_heading=90.0)
-        while self.heading_timer is not None: # VERY IMPORTANT: use the heading_timer not motion_timer for this 
+        target = (self.current_heading + 90) % 360
+        self.change_heading(target_heading=target)
+        while self.heading_timer is not None: # VERY IMPORTANT: use the heading_timer not motion_timer for this
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done changing to heading 90 degrees to the right")        
 
