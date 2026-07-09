@@ -115,7 +115,7 @@ class AligningTest(MovementNode):
                 target_count = 0
                 end_count += 1
 
-                self.move(drive = 1550, duration = 0.1)
+                self.move(drive = 1600, duration = 0.1)
                 while self.motion_timer is not None:
                     rclpy.spin_once(self, timeout_sec=0.05)
 

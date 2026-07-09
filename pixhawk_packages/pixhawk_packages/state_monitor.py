@@ -41,7 +41,7 @@ class StateMonitor(Node):
             self.change_mode("ALT_HOLD")
             return
         elif self.current_state.armed is not True:
-            self.get_logger().info("amring the pixhawk NOW")
+            self.get_logger().info("arming the pixhawk NOW")
             self.arm(True)
             return
         
