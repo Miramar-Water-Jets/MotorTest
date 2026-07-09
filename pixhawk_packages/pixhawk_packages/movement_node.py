@@ -1,16 +1,18 @@
 import rclpy
-from rclpy.node import Node
+from geometry_msgs.msg import (
+    Vector3,  # for importing the vector3 message type to send imu data in euler degree
+)
 from rclpy.duration import Duration
-from std_msgs.msg import UInt16MultiArray, Float64
+from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
-from geometry_msgs.msg import Vector3                       #for importing the vector3 message type to send imu data in euler degree
-
+from std_msgs.msg import Float64, UInt16MultiArray
 
 
 class MovementNode(Node):
     """
     ---initialization that subscribe to depth topic and publish thruster command---
     """
+
     def __init__(self):
         super().__init__("movement_node")
 
@@ -26,29 +28,30 @@ class MovementNode(Node):
 
         self.motion_timer = None
 
-        self.end_time = None 
+        self.end_time = None
         qos = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
-        qos_best_effort = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)
+        qos_best_effort = QoSProfile(
+            depth=10, reliability=ReliabilityPolicy.BEST_EFFORT
+        )
 
-        self.thruster_cmd_pub = self.create_publisher(UInt16MultiArray,'auv/thruster_cmd',qos)
+        self.thruster_cmd_pub = self.create_publisher(
+            UInt16MultiArray, "auv/thruster_cmd", qos
+        )
 
-        self.depth_sub = self.create_subscription(Float64, '/mavros/global_position/rel_alt', self.depth_cb, qos_best_effort)
-        self.IMU_sub = self.create_subscription(Vector3, '/auv/imu', self.heading_cb, qos_best_effort)
+        self.depth_sub = self.create_subscription(
+            Float64, "/mavros/global_position/rel_alt", self.depth_cb, qos_best_effort
+        )
+        self.IMU_sub = self.create_subscription(
+            Vector3, "/auv/imu", self.heading_cb, qos_best_effort
+        )
 
-
-
-
-
-    def depth_cb(self,msg):
+    def depth_cb(self, msg):
         self.current_depth = abs(msg.data)
 
     def heading_cb(self, msg):
         self.current_heading = msg.z
 
-
-
-
-    def send(self, drive = 1500, strafe = 1500, dive = 1500, heading = 1500):
+    def send(self, drive=1500, strafe=1500, dive=1500, heading=1500):
         msg = UInt16MultiArray()
 
         msg.data = [65535] * 18
@@ -59,10 +62,7 @@ class MovementNode(Node):
 
         self.thruster_cmd_pub.publish(msg)
 
-
-
-
-    def move(self,drive = 1500, strafe = 1500, dive = 1500, heading = 1500, duration = 1.0):
+    def move(self, drive=1500, strafe=1500, dive=1500, heading=1500, duration=1.0):
         if self.motion_timer:
             self.motion_timer.cancel()
             self.motion_timer = None
@@ -72,16 +72,17 @@ class MovementNode(Node):
         self._dive = dive
         self._heading = heading
 
-        self.send(drive=self._drive, strafe=self._strafe, dive=self._dive, heading=self._heading)
+        self.send(
+            drive=self._drive,
+            strafe=self._strafe,
+            dive=self._dive,
+            heading=self._heading,
+        )
 
-        self.end_time = self.get_clock().now() + Duration(seconds = duration)
+        self.end_time = self.get_clock().now() + Duration(seconds=duration)
         self.motion_timer = self.create_timer(0.05, self.motion_timer_callback)
 
-
-
-
-
-    def dive_to_depth(self, target_depth, tolerance = 0.1):
+    def dive_to_depth(self, target_depth, tolerance=0.1):
         self.target_depth = target_depth
         self.tolerance = tolerance
         if self.motion_timer:
@@ -98,10 +99,10 @@ class MovementNode(Node):
             self.destroy_timer(self.dive_timer)
             self.dive_timer = None
         else:
-            dive_cmd = self.DIVE_SPEED if depth_error < 0 else 1500 - (self.DIVE_SPEED - 1500)
+            dive_cmd = (
+                self.DIVE_SPEED if depth_error < 0 else 1500 - (self.DIVE_SPEED - 1500)
+            )
             self.send(dive=dive_cmd)
-
-
 
     def change_heading(self, target_heading, tolerance=5):
         self.target_heading = target_heading
@@ -111,11 +112,12 @@ class MovementNode(Node):
             self.motion_timer = None
 
         # NEW: tracks whether we're currently in a "push" or a "coast"
-        self.heading_state = "coast"       # start by coasting (checking fresh)
-        self.heading_phase_end = self.get_clock().now()  # phase ends "now" so it checks immediately
+        self.heading_state = "coast"  # start by coasting (checking fresh)
+        self.heading_phase_end = (
+            self.get_clock().now()
+        )  # phase ends "now" so it checks immediately
 
         self.heading_timer = self.create_timer(0.05, self.heading_timer_cb)
-
 
     def heading_timer_cb(self):
         heading_error = (self.target_heading - self.current_heading + 180) % 360 - 180
@@ -147,17 +149,20 @@ class MovementNode(Node):
             self.heading_state = "coast"
             self.heading_phase_end = now + Duration(seconds=0.3)  # coast duration
 
+    def motion_timer_callback(self):
+        if self.get_clock().now() >= self.end_time:
+            self.destroy_timer(self.motion_timer)
+            self.motion_timer = None
+        else:
+            self.send(
+                drive=self._drive,
+                strafe=self._strafe,
+                dive=self._dive,
+                heading=self._heading,
+            )
 
-        def motion_timer_callback(self):
-            if self.get_clock().now() >= self.end_time:
-                self.destroy_timer(self.motion_timer) 
-                self.motion_timer = None
-            else:
-                self.send(drive=self._drive, strafe=self._strafe,
-                dive=self._dive, heading=self._heading)
 
-
-def main(args= None):
+def main(args=None):
     rclpy.init(args=args)
     movement_node = MovementNode()
     try:
@@ -171,6 +176,6 @@ def main(args= None):
         except Exception:
             pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-        
