@@ -1,0 +1,12 @@
+{
+  "name": "MotorTest ROS 2 Humble Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+  },
+  "workspaceFolder": "/workspace/mavros_ws/src/MotorTest",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/mavros_ws/src/MotorTest,type=bind,consistency=cached",
+  "runArgs": ["--privileged", "--network=host"],
+  "mounts": ["source=/dev,target=/dev,type=bind"],
+  "remoteUser": "root",
+}

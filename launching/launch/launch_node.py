@@ -26,14 +26,8 @@ def generate_launch_description():
             ),
             Node(
                 package="auv_vision",
-                executable="camera_node",
-                name="camera_node",
-                output="screen",
-            ),
-            Node(
-                package="auv_vision",
-                executable="detection_node",
-                name="detection_node",
+                executable="vision_node",
+                name="vision_node",
                 output="screen",
             ),
             Node(
@@ -46,6 +40,18 @@ def generate_launch_description():
                 package="pixhawk_packages",
                 executable="IMU_node",
                 name="IMU_node",
+                output="screen",
+            ),
+            Node(
+                package="mavros",
+                executable="mavros_node",
+                namespace="mavros",
+                parameters=[
+                    {
+                        "fcu_url": "/dev/ttyACM0:115200",
+                        "system_id": 255,
+                    }
+                ],
                 output="screen",
             ),
         ]

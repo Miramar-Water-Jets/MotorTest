@@ -20,6 +20,11 @@ RUN rm -f /etc/apt/sources.list.d/ros2.list \
     cmake \
     git \
     wget \
+    curl \
+    ca-certificates \
+    pkg-config \
+    clang \
+    libclang-dev \
     libasio-dev \
     libeigen3-dev \
     libtinyxml2-dev \
@@ -36,6 +41,12 @@ RUN rm -f /etc/apt/sources.list.d/ros2.list \
 # which fails to compile under GCC 8. Patch it in-place.
 RUN find /usr/include/GeographicLib -name "*.hpp" \
     -exec sed -i 's/std::ios::streamoff/std::streamoff/g' {} +
+
+ENV RUSTUP_HOME=/opt/rust/rustup
+ENV CARGO_HOME=/opt/rust/cargo
+ENV PATH=/opt/rust/cargo/bin:${PATH}
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
 
 # 2. Install Python build tools via pip3
 #    - colcon-common-extensions: not in Ubuntu 18.04 apt repos (only in ROS 2 apt repo)

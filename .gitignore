@@ -9,3 +9,6 @@
 mav.*
 
 **/__pycache__/
+
+/images/
+**/target/

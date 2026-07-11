@@ -1,0 +1,16 @@
+[package]
+name = "auv_vision"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "vision_node"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+bytemuck = "1"
+half = { version = "2", features = ["bytemuck"] }
+opencv = { version = "0.96", default-features = false, features = ["clang-runtime", "imgproc", "videoio"] }
+r2r = "0.9.5"
+tensorrt-infer = "0.1"
