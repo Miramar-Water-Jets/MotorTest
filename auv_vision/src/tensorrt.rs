@@ -188,8 +188,12 @@ impl Yolo26Detector {
                 continue;
             }
 
+            let Ok(class_id) = ClassId::try_from(class_id as u32) else {
+                continue;
+            };
+
             detections.push(Detection {
-                class_id: ClassId(class_id as u32),
+                class_id,
                 confidence,
                 bounding_box: BoundingBox {
                     x1: (x1 * x_scale).clamp(0.0, frame_width as f32),

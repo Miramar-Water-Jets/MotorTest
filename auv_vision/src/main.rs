@@ -14,8 +14,22 @@ const GATE_BBOX_TOPIC: &str = "/auv/camera/bboxes_gate";
 const CAMERA_INDEX: i32 = 0;
 const FRAME_PERIOD: Duration = Duration::from_millis(1_000 / 3);
 
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ClassId(pub u32);
+pub enum ClassId {
+    Gate = 0,
+}
+
+impl TryFrom<u32> for ClassId {
+    type Error = ();
+
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(Self::Gate),
+            _ => Err(()),
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct BoundingBox {
@@ -83,8 +97,8 @@ fn main() -> Result<()> {
             eprintln!("failed to capture a frame");
         } else {
             for detection in detector.detect(&frame)? {
-                if detection.class_id == ClassId(0) {
-                    gate_publisher.publish(&gate_message(detection))?;
+                match detection.class_id {
+                    ClassId::Gate => gate_publisher.publish(&gate_message(detection))?,
                 }
             }
         }
