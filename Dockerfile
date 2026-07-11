@@ -122,20 +122,26 @@ RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash \
         --executor sequential --parallel-workers 1 \
         --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17"
 
-# 7. Copy the repository packages into the workspace and build them in a separate
-#    step so changes to our packages don't invalidate the dependency build cache.
+# 7. Build the slower, compiled Rust vision package in its own cached layer.
+#    Changes to the Python control/mission/launch packages below will not rerun it.
 COPY auv_vision /workspace/mavros_ws/src/auv_vision
-COPY launching /workspace/mavros_ws/src/launching
-COPY pixhawk_packages /workspace/mavros_ws/src/pixhawk_packages
-COPY testing_stuff /workspace/mavros_ws/src/testing_stuff
-
 RUN /bin/bash -c "source /opt/ros/humble/install/setup.bash \
     && CC=gcc-8 CXX=g++-8 colcon build --symlink-install \
-        --packages-up-to auv_vision launching pixhawk_packages testing_stuff \
+        --packages-select auv_vision \
         --executor sequential --parallel-workers 1 \
         --cmake-args -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17"
 
-# 8. Auto-source the new workspace on container start
+# 8. Build the Python application packages separately. --symlink-install keeps
+#    their installed Python modules linked to source for fast development rebuilds.
+COPY launching /workspace/mavros_ws/src/launching
+COPY pixhawk_packages /workspace/mavros_ws/src/pixhawk_packages
+COPY testing_stuff /workspace/mavros_ws/src/testing_stuff
+RUN /bin/bash -c "source /workspace/mavros_ws/install/setup.bash \
+    && colcon build --symlink-install \
+        --packages-select launching pixhawk_packages testing_stuff \
+        --executor sequential --parallel-workers 1"
+
+# 9. Auto-source the new workspace on container start
 RUN echo "source /workspace/mavros_ws/install/setup.bash" >> ~/.bashrc
 
 # Set default entrypoint behavior
