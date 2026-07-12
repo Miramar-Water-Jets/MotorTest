@@ -36,7 +36,7 @@ class UTurnTest(MovementNode):
 
         # dive down to 1 meter, tolerance is +- 0.1 meter
         self.get_logger().info("Diving to depth now")
-        self.dive_to_depth(target_depth=self.TARGET_DEPTH, tolerance=0.1)
+        self.dive_to_depth(target_depth=self.TARGET_DEPTH, tolerance=0.2)
         while (
             self.dive_timer is not None
         ):  # VERY IMPORTANT: use the dive_timer not motion_timer for this
@@ -45,14 +45,14 @@ class UTurnTest(MovementNode):
 
         # waiting for 1 sec after diving to depth
         self.get_logger().info("waiting for 1 sec now")
-        self.move(duration=1.0)
+        self.move(duration=2.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done waiting 1 sec")
 
         # driving forward for 10 sec at depth
         self.get_logger().info("moving forward at depth 1 meter underwater")
-        self.move(drive=1800, duration=20.0)
+        self.move(drive=1800, duration=10.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward underwater")
@@ -63,48 +63,6 @@ class UTurnTest(MovementNode):
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done waiting 1 sec")
-
-        # turning around exactly 180 degrees
-        self.get_logger().info("turning around 180 degrees now")
-        target = (self.current_heading + 180) % 360
-        self.change_heading(target_heading=target)
-        while (
-            self.heading_timer is not None
-        ):  # VERY IMPORTANT: use the heading_timer not motion_timer for this
-            rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done turning around 180 degrees")
-
-        # waiting for 1 sec after turning around
-        self.get_logger().info("waiting for 1 sec now")
-        self.move(duration=1.0)
-        while self.motion_timer is not None:
-            rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done waiting 1 sec")
-
-        # driving forward for 10 sec back the way it came
-        self.get_logger().info("moving forward at depth 1 meter underwater again")
-        self.move(drive=1800, duration=20.0)
-        while self.motion_timer is not None:
-            rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done moving forward underwater again")
-
-        # waiting for 1 sec after moving forward again
-        self.get_logger().info("waiting for 1 sec now")
-        self.move(duration=1.0)
-        while self.motion_timer is not None:
-            rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done waiting 1 sec")
-
-        # rising back up to the surface
-        self.get_logger().info("rising back up to the surface now")
-        self.dive_to_depth(target_depth=0.0, tolerance=0.1)
-        while (
-            self.dive_timer is not None
-        ):  # VERY IMPORTANT: use the dive_timer not motion_timer for this
-            rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done rising back up to the surface")
-
-        self.get_logger().info("u turn test complete")
 
 
 def main(args=None):
