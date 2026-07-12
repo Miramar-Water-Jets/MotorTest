@@ -36,19 +36,19 @@ class MissionNode(Node):
     def run(self):
         for state in ACTIVE_MISSIONS:
             if state == State.ALIGNING_TEST:
-                self.countdown(10)
+                self.countdown(20)
                 AligningTest().run()
             elif state == State.DEPTH_HOLD_TEST:
-                self.countdown(10)
+                self.countdown(20)
                 DepthTest().run()
             elif state == State.BASIC_TEST:
-                self.countdown(10)
+                self.countdown(20)
                 BasicTest().run()
             elif state == State.SQUARE_TEST:
-                self.countdown(10)
+                self.countdown(20)
                 SquarePatternTest().run()
             elif state == State.U_TURN_TEST:
-                self.countdown(10)
+                self.countdown(20)
                 UTurnTest().run()
 
 
