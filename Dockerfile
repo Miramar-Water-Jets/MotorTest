@@ -141,8 +141,9 @@ RUN /bin/bash -c "source /workspace/mavros_ws/install/setup.bash \
         --packages-select launching pixhawk_packages testing_stuff \
         --executor sequential --parallel-workers 1"
 
-# 9. Auto-source the new workspace on container start
-RUN echo "source /workspace/mavros_ws/install/setup.bash" >> ~/.bashrc
+# 9. Source ROS and the workspace for every container command before executing it.
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Set default entrypoint behavior
-CMD ["bash"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["ros2", "launch", "launching", "launch_node.py"]
