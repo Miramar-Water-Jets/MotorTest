@@ -52,7 +52,7 @@ class UTurnTest(MovementNode):
 
         # driving forward for 10 sec at depth
         self.get_logger().info("moving forward at depth 1 meter underwater")
-        self.move(drive=1800, duration=30.0)
+        self.move(drive=1800, duration=45.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward underwater")
