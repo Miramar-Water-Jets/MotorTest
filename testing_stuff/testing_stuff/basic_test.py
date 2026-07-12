@@ -28,7 +28,7 @@ class BasicTest(MovementNode):
 
         #test forward movement
         self.get_logger().info("going forward NOW")
-        self.move(heading = 1400, duration = 2.5)
+        self.move(heading = 1600, duration = 2.5)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving forward")

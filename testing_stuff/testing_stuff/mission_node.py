@@ -20,7 +20,7 @@ class State(Enum):
     U_TURN_TEST = 5
 
 
-ACTIVE_MISSIONS = [State.U_TURN_TEST]
+ACTIVE_MISSIONS = [State.BASIC_TEST]
 
 
 class MissionNode(Node):
@@ -42,7 +42,7 @@ class MissionNode(Node):
                 self.countdown(20)
                 DepthTest().run()
             elif state == State.BASIC_TEST:
-                self.countdown(20)
+                self.countdown(5)
                 BasicTest().run()
             elif state == State.SQUARE_TEST:
                 self.countdown(20)
