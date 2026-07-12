@@ -32,8 +32,8 @@ class UTurnTest(MovementNode):
             rclpy.spin_once(self, timeout_sec=0.1)
         self.get_logger().info("AUV is ready for testing")
 
-        self.TARGET_DEPTH = 0.2
-        """
+        self.TARGET_DEPTH = 1.0
+        
         # dive down to 1 meter, tolerance is +- 0.1 meter
         self.get_logger().info("Diving to depth now")
         self.dive_to_depth(target_depth=self.TARGET_DEPTH, tolerance=0.1)
@@ -42,7 +42,7 @@ class UTurnTest(MovementNode):
         ):  # VERY IMPORTANT: use the dive_timer not motion_timer for this
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done diving to depth")
-        """
+        
         # waiting for 1 sec after diving to depth
         self.get_logger().info("waiting for 1 sec now")
         self.move(duration=2.0)
