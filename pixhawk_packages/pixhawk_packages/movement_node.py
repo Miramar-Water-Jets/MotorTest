@@ -104,24 +104,34 @@ class MovementNode(Node):
             )
             self.send(dive=dive_cmd)
 
-    def change_heading(self, target_heading, tolerance=5):
+    def change_heading(self, target_heading, tolerance=5, timeout_sec=10.0):
         self.target_heading = target_heading
         self.tolerance = tolerance
+        self.heading_timeout_sec = timeout_sec
+        self.heading_start_time = self.get_clock().now()  # NEW
+
         if self.motion_timer:
             self.destroy_timer(self.motion_timer)
             self.motion_timer = None
 
-        # NEW: tracks whether we're currently in a "push" or a "coast"
-        self.heading_state = "coast"  # start by coasting (checking fresh)
-        self.heading_phase_end = (
-            self.get_clock().now()
-        )  # phase ends "now" so it checks immediately
+        self.heading_state = "coast"
+        self.heading_phase_end = self.get_clock().now()
 
         self.heading_timer = self.create_timer(0.05, self.heading_timer_cb)
+
 
     def heading_timer_cb(self):
         heading_error = (self.target_heading - self.current_heading + 180) % 360 - 180
         now = self.get_clock().now()
+
+        # NEW: timeout safety net
+        elapsed = (now - self.heading_start_time).nanoseconds / 1e9
+        if elapsed > self.heading_timeout_sec:
+            self.get_logger().warn("heading timeout, giving up on this turn")
+            self.send(heading=1500)
+            self.destroy_timer(self.heading_timer)
+            self.heading_timer = None
+            return
 
         # done turning, close enough
         if abs(heading_error) <= self.tolerance:
@@ -135,19 +145,14 @@ class MovementNode(Node):
             return
 
         if self.heading_state == "coast":
-            # coast phase just ended -> start a new push
             heading_cmd = 1650 if heading_error > 0 else 1350
             self.send(heading=heading_cmd)
-
             self.heading_state = "push"
-            self.heading_phase_end = now + Duration(seconds=0.15)  # push duration
-
+            self.heading_phase_end = now + Duration(seconds=0.15)
         else:
-            # push phase just ended -> start coasting
             self.send(heading=1500)
-
             self.heading_state = "coast"
-            self.heading_phase_end = now + Duration(seconds=0.3)  # coast duration
+            self.heading_phase_end = now + Duration(seconds=0.3)
 
     def motion_timer_callback(self):
         if self.get_clock().now() >= self.end_time:

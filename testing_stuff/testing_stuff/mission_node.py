@@ -8,19 +8,19 @@ from std_msgs.msg import String
 from testing_stuff.aligning_test import AligningTest
 from testing_stuff.basic_test import BasicTest
 from testing_stuff.depth_hold_test import DepthTest
-from testing_stuff.square_pattern_test import SquarePatternTest
+from testing_stuff.semi_final import Semi
 from testing_stuff.u_turn_test import UTurnTest
 
 
 class State(Enum):
-    SQUARE_TEST = 1
-    BASIC_TEST = 2
+    SEMI = 1
     DEPTH_HOLD_TEST = 3
     ALIGNING_TEST = 4
     U_TURN_TEST = 5
+    BASIC_TEST = 6
 
 
-ACTIVE_MISSIONS = [State.U_TURN_TEST]
+ACTIVE_MISSIONS = [State.DEPTH_HOLD_TEST]
 
 
 class MissionNode(Node):
@@ -41,15 +41,15 @@ class MissionNode(Node):
             elif state == State.DEPTH_HOLD_TEST:
                 self.countdown(20)
                 DepthTest().run()
-            elif state == State.BASIC_TEST:
-                self.countdown(5)
-                BasicTest().run()
-            elif state == State.SQUARE_TEST:
+            elif state == State.SEMI:
                 self.countdown(20)
-                SquarePatternTest().run()
+                Semi().run()
             elif state == State.U_TURN_TEST:
                 self.countdown(45)
                 UTurnTest().run()
+            elif state == State.BASIC_TEST:
+                self.countdown(20)
+                BasicTest().run()
 
 
 def main(args=None):

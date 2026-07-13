@@ -43,19 +43,19 @@ class DepthTest(MovementNode):
         self.get_logger().info("done diving to depth")
 
         # waiting for 10 seconds to check whether hold depth actually works
-        self.get_logger().info("waiting for 10 sec now")
-        self.move(duration=10.0)
+        self.get_logger().info("waiting for 1 sec now")
+        self.move(duration=1.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
-        self.get_logger().info("done waiting 10 sec")
+        self.get_logger().info("done waiting 1 sec")
 
         # driving forward for 5 sec after holding depth
         self.get_logger().info(" moving forward at depth 1 meter underwater")
-        self.move(drive=1800, duration=5.0)
+        self.move(drive=1800, duration=4.0)
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving underwater")
-
+        
         # waiting for one sec after moving forward at depth 1m
         self.get_logger().info("waiting for 1 sec now")
         self.move(duration=1.0)
@@ -67,13 +67,18 @@ class DepthTest(MovementNode):
         self.get_logger().info("turning to 90 degrees right now")
         target = (self.current_heading + 90) % 360
         self.change_heading(target_heading=target)
-        while (
-            self.heading_timer is not None
-        ):  # VERY IMPORTANT: use the heading_timer not motion_timer for this
+        while (self.heading_timer is not None):  # VERY IMPORTANT: use the heading_timer not motion_timer for this
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done changing to heading 90 degrees to the right")
-
         self.get_logger().info(" depth hold test complete")
+
+        # driving forward for 5 sec after holding depth
+        self.get_logger().info(" moving forward at depth 1 meter underwater")
+        self.move(drive=1800, duration=4.0)
+        while self.motion_timer is not None:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        self.get_logger().info("done moving underwater")
+        
 
 
 def main(args=None):
