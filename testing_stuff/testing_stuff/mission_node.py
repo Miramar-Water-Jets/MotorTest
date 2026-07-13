@@ -48,7 +48,7 @@ class MissionNode(Node):
                 self.countdown(20)
                 SquarePatternTest().run()
             elif state == State.U_TURN_TEST:
-                self.countdown(20)
+                self.countdown(45)
                 UTurnTest().run()
 
 
