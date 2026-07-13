@@ -20,7 +20,7 @@ class State(Enum):
     U_TURN_TEST = 5
 
 
-ACTIVE_MISSIONS = [State.BASIC_TEST]
+ACTIVE_MISSIONS = [State.U_TURN_TEST]
 
 
 class MissionNode(Node):
