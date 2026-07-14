@@ -2,10 +2,9 @@
 #      
 
 import rclpy
-from rclpy.node import Node
 import time
-from std_msgs.msg import Bool, Float32MultiArray
-from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, QoSDurabilityPolicy
+from std_msgs.msg import Float32MultiArray
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from pixhawk_packages.movement_node import MovementNode
 
 
@@ -23,18 +22,9 @@ class AligningTest(MovementNode):
         self.last_detection_time = None
 
         qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, history=HistoryPolicy.KEEP_LAST, depth=1)
-        qos_latched = QoSProfile( depth=1, reliability=ReliabilityPolicy.RELIABLE, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
-
         self.detection_sub = self.create_subscription(Float32MultiArray,"/auv/camera/bboxes_gate",self.detection_cb, qos)
-        self.ready_sub = self.create_subscription(Bool,'/auv/ready',self.ready_cb, qos_latched)
 
-        self.current_status = False
         self.detection_data = None
-
-
-
-    def ready_cb(self,msg):
-        self.current_status = msg.data
 
     def detection_cb(self,msg):
         self.detection_data = msg.data
@@ -44,9 +34,11 @@ class AligningTest(MovementNode):
 
     def run(self):
        
-        while not self.current_status:
-            rclpy.spin_once(self, timeout_sec = 0.1)
+        self.wait_until_ready()
         self.get_logger().info("AUV is ready for testing")
+        self.change_heading(self.current_heading)
+        if not self.countdown(20):
+            return
 
         target_count = 0
         end_count = 0

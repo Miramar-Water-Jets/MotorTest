@@ -1,4 +1,3 @@
-import time
 from enum import Enum
 
 import rclpy
@@ -20,35 +19,26 @@ class State(Enum):
     BASIC_TEST = 6
 
 
-ACTIVE_MISSIONS = [State.DEPTH_HOLD_TEST]
+ACTIVE_MISSIONS = [State.SEMI]
 
 
 class MissionNode(Node):
     def __init__(self):
         super().__init__("mission_node")
 
-    def countdown(self, seconds):
-        for i in range(seconds, 0, -1):
-            self.get_logger().info(f"Starting in {i}...")
-            time.sleep(1)
-        self.get_logger().info("GO!")
+
 
     def run(self):
         for state in ACTIVE_MISSIONS:
             if state == State.ALIGNING_TEST:
-                self.countdown(20)
                 AligningTest().run()
             elif state == State.DEPTH_HOLD_TEST:
-                self.countdown(20)
                 DepthTest().run()
             elif state == State.SEMI:
-                self.countdown(20)
                 Semi().run()
             elif state == State.U_TURN_TEST:
-                self.countdown(45)
                 UTurnTest().run()
             elif state == State.BASIC_TEST:
-                self.countdown(20)
                 BasicTest().run()
 
 

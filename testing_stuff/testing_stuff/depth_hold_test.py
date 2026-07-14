@@ -6,32 +6,20 @@ import time
 
 import rclpy
 from pixhawk_packages.movement_node import MovementNode
-from rclpy.qos import QoSDurabilityPolicy, QoSProfile, ReliabilityPolicy
-from std_msgs.msg import Bool
 
 
 class DepthTest(MovementNode):
     def __init__(self):
         super().__init__()
-        self.current_status = False
-
-        qos_latched = QoSProfile(
-            depth=1,
-            reliability=ReliabilityPolicy.RELIABLE,
-            durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
-        )
-
-        self.create_subscription(Bool, "/auv/ready", self.ready_cb, qos_latched)
-
-    def ready_cb(self, msg):
-        self.current_status = msg.data
 
     def run(self):
-        while not self.current_status:
-            rclpy.spin_once(self, timeout_sec=0.1)
+        self.wait_until_ready()
         self.get_logger().info("AUV is ready for testing")
+        self.change_heading(self.current_heading)
+        if not self.countdown(20):
+            return
 
-        self.TARGET_DEPTH = 0.5
+        self.TARGET_DEPTH = 1
 
         # dive to depth 1 meter with the hardcoded speed of 1600, tolerance is + - 0.1 meter
         self.get_logger().info("Diving to depth now")
@@ -55,7 +43,7 @@ class DepthTest(MovementNode):
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving underwater")
-        
+
         # waiting for one sec after moving forward at depth 1m
         self.get_logger().info("waiting for 1 sec now")
         self.move(duration=1.0)
@@ -78,7 +66,7 @@ class DepthTest(MovementNode):
         while self.motion_timer is not None:
             rclpy.spin_once(self, timeout_sec=0.05)
         self.get_logger().info("done moving underwater")
-        
+
 
 
 def main(args=None):
